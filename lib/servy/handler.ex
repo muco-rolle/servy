@@ -51,10 +51,9 @@ defmodule Servy.Handler do
 
   def route(%{method: "GET", path: "/about"} = conv) do
     {:ok, path} = File.cwd()
+    pages_path = Path.join(path, "pages/about.html")
 
-    page_path = path <> "/pages/about.html"
-
-    case File.read(page_path) do
+    case File.read(pages_path) do
       {:ok, content} ->
         %{conv | status: 200, body: content}
 
