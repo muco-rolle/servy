@@ -34,33 +34,22 @@ defmodule Servy.Handler do
     conv
   end
 
-  def route(conv) do
-    # route(conv, conv.method, conv.path)
-    route(conv, conv.method, conv.path)
+  def route(%{method: "GET", path: "/transactions"} = conv) do
+    body = "[{id: 1, reason: 'Lunch'}, {id: 2, reason: 'transport'}]"
+
+    %{conv | status: 200, body: body}
   end
 
-  def route(conv, "GET", "/transactions") do
-    %{
-      conv
-      | status: 200,
-        body: "[{id: 1, reason: 'Lunch'}, {id: 2, reason: 'transport'}]"
-    }
+  def route(%{method: "GET", path: "/transactions/" <> id} = conv) do
+    %{conv | status: 200, body: "{id: #{id}, reason: 'Lunch'}"}
   end
 
-  def route(conv, "GET", "/wildthings") do
-    %{
-      conv
-      | status: 200,
-        body: "Bears, Lions, and Tigers"
-    }
+  def route(%{method: "GET", path: "/wildthings"} = conv) do
+    %{conv | status: 200, body: "Bears, Lions, and Tigers"}
   end
 
-  def route(conv, _method, path) do
-    %{
-      conv
-      | status: 404,
-        body: "No #{path} found!"
-    }
+  def route(%{path: path} = conv) do
+    %{conv | status: 404, body: "No #{path} found!"}
   end
 
   def format_response(%{body: body, status: status}) do
@@ -88,7 +77,7 @@ defmodule Servy.Handler do
 end
 
 _request = """
-GET /transactions HTTP/1.1
+GET /transactions/2 HTTP/1.1
 HOST: ingodo.com
 USER-Agent: Mozilla/5.0
 Accept: text/html,application/xhtml+xml
