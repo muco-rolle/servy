@@ -4,6 +4,7 @@ defmodule Servy.Handler do
   """
 
   require Logger
+  require File
 
   def handle(request) do
     request
@@ -48,6 +49,23 @@ defmodule Servy.Handler do
     %{conv | status: 200, body: "Bears, Lions, and Tigers"}
   end
 
+  def route(%{method: "GET", path: "/about"} = conv) do
+    {:ok, path} = File.cwd()
+
+    page_path = path <> "/pages/about.html"
+
+    case File.read(page_path) do
+      {:ok, content} ->
+        %{conv | status: 200, body: content}
+
+      {:error, :enoent} ->
+        %{conv | status: 404, body: "File not found!"}
+
+      {:error, reason} ->
+        %{conv | status: 500, body: "Reading file error: #{reason}"}
+    end
+  end
+
   def route(%{path: path} = conv) do
     %{conv | status: 404, body: "No #{path} found!"}
   end
@@ -60,6 +78,14 @@ defmodule Servy.Handler do
 
     #{body}
     """
+  end
+
+  def get_file_content({:error, reason}) do
+    "File does not exists #{reason}"
+  end
+
+  def get_file_content({:ok, content}) do
+    content
   end
 
   defp status_reason(code) do
@@ -93,6 +119,14 @@ Accept: text/html,application/xhtml+xml
 """
 
 request = """
+GET /about HTTP/1.1
+HOST: ingodo.com
+USER-Agent: Mozilla/5.0
+Accept: text/html,application/xhtml+xml
+
+"""
+
+_request = """
 GET /posts HTTP/1.1
 HOST: ingodo.com
 USER-Agent: Mozilla/5.0
