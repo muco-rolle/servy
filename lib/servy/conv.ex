@@ -3,7 +3,12 @@ defmodule Servy.Conv do
   Conv definition
   """
 
-  defstruct method: "", path: "", body: "", status: nil, params: %{}
+  defstruct method: "",
+            path: "",
+            body: "",
+            status: nil,
+            params: %{},
+            headers: %{}
 
   def full_status(conv) do
     "#{conv.status} #{status_reason(conv.status)}"

@@ -3,12 +3,13 @@ defmodule Servy.Handler do
   Handling Request and Responses
   """
 
-  @pages_path "pages/about.html"
-
-  require File
   import Servy.Parser, only: [parse: 1]
 
+  require File
+
   alias Servy.Conv
+
+  @pages_path "pages/about.html"
 
   def handle(request) do
     request
@@ -68,6 +69,16 @@ defmodule Servy.Handler do
 
     #{conv.body}
     """
+  end
+
+  def loopy([head | tail]) do
+    IO.puts("Head #{head} Tail: #{inspect(tail)}")
+
+    loopy(tail)
+  end
+
+  def loopy([]) do
+    IO.puts("End of loop")
   end
 end
 
