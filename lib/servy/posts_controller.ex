@@ -6,7 +6,7 @@ defmodule Servy.PostsController do
   alias Servy.Post
 
   def index(conv) do
-    posts = Post.all()
+    posts = Post.list_posts()
 
     template = fn post ->
       """
@@ -22,7 +22,17 @@ defmodule Servy.PostsController do
     %{conv | status: 200, body: posts_template}
   end
 
-  def show do
+  def show(conv, id) do
+    post = Post.get_post(id)
+
+    post_template = """
+      <ul>
+        <li>#{post.id} - #{post.title}</li>
+        <li>#{post.body} </li>
+      </ul>
+    """
+
+    %{conv | status: 200, body: post_template}
   end
 
   def create do

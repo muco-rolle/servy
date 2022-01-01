@@ -19,6 +19,10 @@ defmodule Servy.Handler do
     PostsController.index(conv)
   end
 
+  def route(%Conv{method: "GET", path: "/posts/" <> id} = conv) do
+    PostsController.show(conv, id)
+  end
+
   def route(%Conv{path: path} = conv) do
     %{conv | status: 404, body: "No #{path} found!"}
   end
@@ -60,7 +64,7 @@ Accept: text/html,application/xhtml+xml
 """
 
 request = """
-GET /posts HTTP/1.1
+GET /posts/1 HTTP/1.1
 HOST: ingodo.com
 USER-Agent: Mozilla/5.0
 Accept: text/html,application/xhtml+xml
